@@ -41,9 +41,13 @@ Event-B в среде Rodin.
 
    - [установка AstraVer](https://forge.ispras.ru/projects/astraver/wiki)
 
+   - [ACSL: ANSI/ISO C Specification Language](https://frama-c.com/download/acsl.pdf)
+
 5. Формальный метод Event-B и среда Rodin
 
    - [Rodin Handbook](https://stups.hhu-hosting.de/handbook/rodin/)
+
+   - [Event-B Wiki](https://wiki.event-b.org/index.php/Main_Page)
 
 6. Формальное моделирование систем защиты информации
 
