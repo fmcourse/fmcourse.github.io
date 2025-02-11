@@ -1,0 +1,415 @@
+\documentclass[hyperref={unicode=true}]{beamer}
+\usepackage[utf8]{inputenx}
+\usepackage[russian]{babel}
+
+\usepackage{multicol}
+
+\usepackage[pgf]{dot2texi}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows}
+
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usepackage{comment}
+
+\title{Лекция 3. Метод фундированных множеств Флойда}
+\author{}
+\date{}
+
+\usetheme{Warsaw}
+
+\AtBeginSection[] {
+	\begin{frame}{Содержание}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+%\overfullrule=5pt
+
+\begin{document}
+	\begin{frame}{}
+		\titlepage
+	\end{frame}
+
+    \begin{frame}{Цель лекции}
+    Определить метод доказательства завершимости.
+    \end{frame}
+
+    \section{Поиск парадигмы}
+
+    \begin{frame}[fragile]{Пример 1}
+    \begin{multicols}{2}
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=0.7];
+		START[style=rounded, height=1, width=2, texlbl="$\begin{matrix}START\\ y \leftarrow 0\end{matrix}$"];
+		JOIN;
+        COND[style=rounded, width=2.5, texlbl="$y < x$"];
+		INCR[width=2, texlbl="$y \leftarrow y + 1$"];
+        HALT[style=rounded, width=2, label="HALT"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND [weight=8];
+		{ rank=same; p1 -> JOIN; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND [label="T", arrowhead=none];
+                     COND -> p4 [label="F", arrowhead=none]; }
+		p3 -> INCR [weight=8];
+		p4 -> HALT [weight=8];
+		{ rank=same; INCR; HALT; }
+		INCR -> p6 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; }
+        }
+	\end{dot2tex}
+
+	\normalsize
+
+    $\begin{matrix}
+    D_x = D_y = \mathbb{Z}\\
+    \varphi(x) \equiv x > 0\\
+    \end{matrix}$
+
+    Очевидно, что эта блок-схема завершается? Постараемся
+    сформулировать, почему это очевидно. Для этого
+    сравним свой ответ на этот вопрос для нескольких блок-схем.
+    \end{multicols}
+    \end{frame}
+
+    \begin{frame}[fragile]{Пример 2}
+    \begin{multicols}{2}
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=0.7];
+		START[style=rounded, height=1, width=2, texlbl="$\begin{matrix}START\\ y_1 \leftarrow x_1\end{matrix}$"];
+		JOIN;
+        COND1[style=rounded, width=2.5, texlbl="$y_1 \geq x_1$"];
+        COND2[style=rounded, width=2.5, texlbl="$y_1 \leq x_2$"];
+		INCR1[width=2, texlbl="$y_1 \leftarrow y_1 + 1$"];
+		INCR2[width=2, texlbl="$y_1 \leftarrow -y_1$"];
+        HALT[style=rounded, width=2, label="HALT"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND1 [weight=8];
+        COND1 -> COND2 [label="T", weight=8];
+		{ rank=same; p1 -> JOIN; }
+        { rank=same; COND1 -> HALT [label="F"]; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND2 [label="T", arrowhead=none]; COND2 -> p4 [label="F", arrowhead=none]; }
+		p3 -> INCR1 [weight=8];
+		p4 -> INCR2 [weight=8];
+		{ rank=same; INCR1; INCR2; }
+		INCR1 -> p6 [weight=8, arrowhead=none];
+		INCR2 -> p7 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; p6 -> p7 [arrowhead=none]; }
+        }
+	\end{dot2tex}
+
+	\normalsize
+
+    $\begin{matrix}
+    D_{x_1} = D_{x_2} = D_{y_1} = \mathbb{Z}\\
+    \varphi(x_1, x_2) \equiv 0 \leq x_1 \leq x_2\\
+    \end{matrix}$
+
+    Эта блок-схема завершается?
+    \end{multicols}
+    \end{frame}
+
+    \begin{frame}[fragile]{Пример 3}
+    \begin{multicols}{2}
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=0.7];
+		START[style=rounded, height=1, width=2, texlbl="$\begin{matrix}START\\ y_1 \leftarrow x_1\end{matrix}$"];
+		JOIN;
+        COND1[style=rounded, width=2.5, texlbl="$y_1 \geq x_1$"];
+        COND2[style=rounded, width=2.5, texlbl="$y_1 \leq x_2$"];
+		INCR1[width=2, texlbl="$y_1 \leftarrow y_1 + 1$"];
+		INCR2[width=2, texlbl="$y_1 \leftarrow x_1$"];
+        HALT[style=rounded, width=2, label="HALT"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND1 [weight=8];
+        COND1 -> COND2 [label="T", weight=8];
+		{ rank=same; p1 -> JOIN; }
+        { rank=same; COND1 -> HALT [label="F"]; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND2 [label="T", arrowhead=none]; COND2 -> p4 [label="F", arrowhead=none]; }
+		p3 -> INCR1 [weight=8];
+		p4 -> INCR2 [weight=8];
+		{ rank=same; INCR1; INCR2; }
+		INCR1 -> p6 [weight=8, arrowhead=none];
+		INCR2 -> p7 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; p6 -> p7 [arrowhead=none]; }
+        }
+	\end{dot2tex}
+
+	\normalsize
+
+    $\begin{matrix}
+    D_{x_1} = D_{x_2} = D_{y_1} = \mathbb{Z}\\
+    \varphi(x_1, x_2) \equiv 0 \leq x_1 \leq x_2\\
+    \end{matrix}$
+
+    Эта блок-схема завершается?
+    \end{multicols}
+    \end{frame}
+
+    \begin{frame}[fragile]{Пример 4}
+    \begin{multicols}{2}
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=0.7];
+		START[style=rounded, height=1, width=2, texlbl="$\begin{matrix}START\\ y \leftarrow x\end{matrix}$"];
+		JOIN;
+        COND[style=rounded, width=2.5, texlbl="$y = 1$"];
+		INCR[width=2, texlbl="$y \leftarrow f(y)$"];
+        HALT[style=rounded, width=2, label="HALT"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND [weight=8];
+		{ rank=same; p1 -> JOIN; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND [label="F", arrowhead=none];
+                     COND -> p4 [label="T", arrowhead=none]; }
+		p3 -> INCR [weight=8];
+		p4 -> HALT [weight=8];
+		{ rank=same; INCR; HALT; }
+		INCR -> p6 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; }
+        }
+	\end{dot2tex}
+
+	\normalsize
+
+    $\begin{matrix}
+    D_x = D_y = \mathbb{Z}\\
+    \varphi(x) \equiv x > 0\\
+    f(x) \equiv \begin{cases}x/2 &, 2|x\\
+                             3x + 1 &, \neg(2|x)
+                \end{cases}\\
+    \end{matrix}$
+
+    Эта блок-схема завершается?
+    \end{multicols}
+    \end{frame}
+
+    \begin{frame}{Выводы из примеров}
+    \begin{itemize}
+    \item
+    Чтобы доказывать завершаемость, нужно иметь ответ на вопрос,
+    почему блок-схема завершается.
+    \item
+    Направление мысли: завершение блок-схемы -- значит <<выполнение
+    своей задачи полностью>>. <<Завершимый процесс работы блок-схемы>>
+    -- это постепенное выполнение задачи, приближение к ее
+    полному выполнению.
+    \item
+    Что-то похожее для метода индуктивных утверждений: нужно
+    иметь ответ на вопрос, почему блок-схема частично корректна,
+    чтобы получить доказательство. Доказательство -- это лишь
+    подтверждение мысли, ее выражение в определенном виде.
+    \end{itemize}
+    \end{frame}
+
+    \section{Доказательство на примере}
+
+	\begin{frame}[fragile]{Пример для доказательства}
+	\begin{multicols}{2}
+
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=0.7];
+		START[style=rounded, height=1, width=2, texlbl="$\begin{matrix}START\\ y \leftarrow 0\end{matrix}$"];
+		JOIN;
+        COND[style=rounded, width=2.5, texlbl="$y = x$"];
+		INCR[width=2, texlbl="$y \leftarrow y + 2$"];
+        HALT[style=rounded, width=2, texlbl="$HALT$"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND [weight=8];
+		{ rank=same; p1 -> JOIN; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND [label="F", arrowhead=none]; COND -> p4 [label="T", arrowhead=none]; }
+		p3 -> INCR [weight=8];
+		p4 -> HALT [weight=8];
+		{ rank=same; INCR; HALT; }
+		INCR -> p6 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; }
+        }
+	\end{dot2tex}
+
+	\normalsize
+
+    $\begin{matrix}
+    D_x = D_y = \mathbb{Z}\\
+    \varphi(x) \equiv x \geq 0 \land 2 | x\\
+    \end{matrix}$
+
+    Какова <<работа, которую должна выполнить блок-схема>>?
+    Каждый оператор <<выполняет часть работы>>
+    и <<приближает к выполнению полностью>>.
+    Когда эта <<работа выполнена полностью>>?
+    Формально доказать завершаемость блок-схемы на $\varphi$.
+	\end{multicols}
+	\end{frame}
+
+    \begin{frame}{Поиск доказательства}
+    \begin{itemize}
+    \item
+    Чем больше значение переменной $y$, тем мы ближе к
+    завершению, к выполнению <<работы полностью>>.
+    \item
+    Математически: рассмотрим произвольное вычисление,
+    отметим конфигурации перед оператором TEST,
+    получили последовательность конфигураций.
+    \item
+    Обозначим $y_i$ -- последовательность значений
+    переменной $y$ в этой последовательности.
+    \item
+    Докажем, что последовательность $y_i$ возрастает
+    и ограничена сверху. Значит, она конечна.
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Формулы}
+    \begin{itemize}
+    \item
+    Возрастание: $\forall i \cdot~ y_{i} + 2 > y_{i}$ -- истинно
+    \item
+    Ограниченность (предполагаем, что верхняя граница
+    равна $x + 1$): $\forall x \forall i\cdot x \geq 0 \land
+    (2|x) \Rightarrow y_{i} \leq x$ -- ложно! Контрпример: $x = 0$,
+    $y_i = 2$. Но он невозможен. Не хватает дополнительного
+    условия в посылке импликации: о том, что $y_i \leq x$.
+    \item
+    Можно ли доказать, что на каждой конфигурации
+    перед TEST выполнено утверждение $y \leq x$?
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Индуктивное утверждение}
+    \begin{itemize}
+    \item
+    Обозначим А -- нашу точку сечения.
+    Обозначим $q$ -- индуктивное утверждение. Составим
+    условия верификации.
+    \item
+    Путь S-A (1): $\forall x \in \mathbb{Z} ~ x \geq 0 \land (2|x)
+    \Rightarrow q(x, 0)$
+    \item
+    Путь A-F-A (2): $\forall x, y \in \mathbb{Z} ~ x \geq 0
+    \land (2|x) \land q(x, y) \land y \neq x \Rightarrow q(x, y + 2)$
+    \item
+    (3) $\forall x, y \in \mathbb{Z} ~ x \geq 0
+    \land (2|x) \land q(x, y) \Rightarrow y \leq x$
+    \item
+    Первая прикидка: $q(x, y) = (y \leq x)$. Но (2) не выполнено.
+    Контрпример: $x = 2, y = 1$. Исправляем: $q(x, y) = (y \leq x
+            \land (2|y))$. Теперь все истинно!
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Доказательство}
+    Итак, мы рассматривали конфигурации на связке перед
+    оператором TEST (т.к. это точка сечения). Мы доказали, что
+    в каждой конфигурации в точке сечения истинно
+    индуктивное утверждение $q(x, y) = (y \leq x \land (2|y))$.
+    Оно позволяет доказать, что в этих конфигурациях значение
+    переменной $y$ не больше значения переменной $x$ и строго
+    возрастает в каждой следующей конфигурации вычисления.
+    Значит, последовательность конфигураций не может быть
+    бесконечной. Завершимость доказана.
+    \end{frame}
+
+    \section{Метод фундированных множеств}
+
+    \begin{frame}{Предварительные определения}
+	\emph{Отношение строгого частичного порядка} -- это бинарное отношение $\prec$ на некотором множестве $W$, обладающее следующими свойствами:
+    \begin{enumerate}
+    \item антирефлексивность: $\forall x \in W \cdot \neg (x \prec x)$.
+    \item антисимметричность: $\forall x,~y \in W \cdot x \prec y \Rightarrow \neg (y \prec x)$.
+    \item транзитивность: $\forall x, y, z \in W \cdot x \prec y \land y \prec z \Rightarrow x \prec z$.
+    \end{enumerate}
+
+    \emph{Фундированное множество} -- множество, снабженное отношением строгого частичного порядка, в котором не существует бесконечно убывающей последовательности элементов.
+    \end{frame}
+
+	\begin{frame}{Метод фундированных множеств}
+
+    \begin{block}{Шаг 1}
+	Выбор множества т.с. (все циклические пути имеют т.с.) и фундированного множества $(W,~\prec)$.
+	\end{block}
+	\begin{block}{Шаг 2}
+	Выбор индуктивного утверждения для каждой т.с., выписывание условий верификации для каждого
+	базового пути между точками сечения и псевдосвязкой у START.
+	\end{block}
+	\begin{block}{Шаг 3}
+	Выбор оценочной функции для каждой точки сечения ($u_A~:~D_{\bar{x}}~\times~D_{\bar{y}}~\rightarrow~W'$, $W \subseteq W'$).
+	\end{block}
+	\end{frame}
+
+	\begin{frame}{Метод фундированных множеств (продолжение)}
+
+	\begin{block}{Шаг 4}
+	Выписывание условия корректности оценочной функции для каждой точки сечения:
+	$\forall \bar{x} \in D_{\bar{x}} ~\forall \bar{y} \in D_{\bar{y}} ~\cdot~
+	\varphi(\bar{x}) \land p_A(\bar{x},~\bar{y}) \Rightarrow u_A(\bar{x},~\bar{y}) \in W$.
+	\end{block}
+	\begin{block}{Шаг 5}
+	Выписывание условия завершимости для каждого базового пути между точками сечения (из А в В):
+	$\forall \bar{x} \in D_{\bar{x}} ~ \forall \bar{y} \in D_{\bar{y}} ~\cdot~
+	\varphi(\bar{x}) \land p_A(\bar{x},~\bar{y})~\land~R_\alpha(\bar{x},~\bar{y}) \Rightarrow
+	u_B(\bar{x},~r_\alpha(\bar{x},~\bar{y})) ~\prec~ u_A(\bar{x},~\bar{y})$.
+	\end{block}
+	\end{frame}
+
+	\begin{frame}{Корректность метода фундированных множеств}
+
+	\begin{block}{Теорема}
+	Дана блок-схема $P$, спецификация $(\varphi,~\psi)$. Если все составленные условия верификации, корректности и завершимости истинны, то $\langle\varphi\rangle~P~\langle T \rangle$, т.е. блок-схема завершима.
+	\end{block}
+
+    Схема доказательства: по индукции доказать выполнение индуктивных утверждений в точках сечения, из фундированности $W$ сделать вывод об отсутствии бесконечных вычислений.
+	\end{frame}
+
+	\begin{frame}{Примеры фундированных множеств}
+	\begin{block}{Натуральные числа}
+	$W~\equiv~\{0,~1,~2,~\ldots\}$ -- множество целых неотрицательных чисел
+
+	$x~\prec~y~\equiv~x~<~y$ -- с естественным порядком на нем
+	\end{block}
+	\begin{block}{Кортежи}
+	$W~\equiv~W_1~\times~W_2$ -- пара двух фундированных множеств $(W_1,~\prec_1)$ и $(W_2,~\prec_2)$.
+
+	$(x_1,~x_2)~\prec~(y_1,~y_2) ~\equiv~ x_1~\prec_1~y_1~\lor~x_1~=~y_1 \land x_2~\prec_2~y_2$ -- лексикографический порядок.
+	\end{block}
+	\end{frame}
+
+\end{document}
+
