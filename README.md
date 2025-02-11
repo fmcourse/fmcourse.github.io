@@ -39,11 +39,13 @@ Event-B в среде Rodin.
 4. Язык формальной спецификации Си-программ ACSL и
    их формальная верификация в AstraVer
 
-   - [установка AstraVer](https://forge.ispras.ru/projects/astraver/wiki)
+   - [установка AstraVer](astraver.md)
 
    - [ACSL: ANSI/ISO C Specification Language](https://frama-c.com/download/acsl.pdf)
 
 5. Формальный метод Event-B и среда Rodin
+
+   - [установка Rodin (версия ИСП РАН)](rodin.md)
 
    - [Rodin Handbook](https://stups.hhu-hosting.de/handbook/rodin/)
 
