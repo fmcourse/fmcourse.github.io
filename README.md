@@ -41,6 +41,8 @@ Event-B в среде Rodin.
 
    - [слайды](slides/acsl/acsl.pdf)
 
+   - [упражнения](exercises/x4.md)
+
    - [установка AstraVer](astraver.md)
 
    - [ACSL: ANSI/ISO C Specification Language](https://frama-c.com/download/acsl.pdf)
