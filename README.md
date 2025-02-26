@@ -39,6 +39,8 @@ Event-B в среде Rodin.
 4. Язык формальной спецификации Си-программ ACSL и
    их формальная верификация в AstraVer
 
+   - [слайды](slides/acsl/acsl.pdf)
+
    - [установка AstraVer](astraver.md)
 
    - [ACSL: ANSI/ISO C Specification Language](https://frama-c.com/download/acsl.pdf)
