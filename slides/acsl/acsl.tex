@@ -74,7 +74,7 @@
     \end{itemize}
     \end{frame}
 
-    \begin{frame}[fragile]{Типы данных}
+    \begin{frame}[fragile]{Типы данных и выражения}
     \begin{itemize}
     \item
     \verb|integer| -- бесконечный целый тип (только для спецификаций)
@@ -83,6 +83,13 @@
     \item
     В операциях с \verb|int| и \verb|integer| происходит преобразование
     \verb|int| к \verb|integer|
+    \item
+    \verb|\forall integer i, j; i >= j ==> a >= j;| -- квантор
+    всеобщности и импликация
+    \item
+    \begin{verbatim}\exists integer i, long k;
+i != k && (i == a <==> i == b)\end{verbatim} --
+    квантор существования, конъюнкция, эквивалентность
     \end{itemize}
     \end{frame}
 
