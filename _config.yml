@@ -1,8 +1,11 @@
 # theme: jekyll-theme-minimal
-remote_theme: jekyll/minima
+# remote_theme: jekyll/minima
+theme: minima
 
 title: Формальные методы разработки программ
 
 header_pages:
   - astraver.md
   - rodin.md
+
+description: ""
