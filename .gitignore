@@ -7,6 +7,7 @@
 *.toc
 *.pyc
 *.bin
+*.synctex.gz
 *.*~
 htmlcov/
 .coverage

@@ -47,7 +47,11 @@ Event-B в среде Rodin.
 
    - [ACSL: ANSI/ISO C Specification Language](https://frama-c.com/download/acsl.pdf)
 
-5. Формальный метод Event-B и среда Rodin
+5. Язык Event-B и среда Rodin
+
+   - [слайды](slides/eventb/eventb.pdf)
+
+   - [упражнения](exercises/x5.md)
 
    - [установка Rodin (версия ИСП РАН)](rodin.md)
 
@@ -55,7 +59,11 @@ Event-B в среде Rodin.
 
    - [Event-B Wiki](https://wiki.event-b.org/index.php/Main_Page)
 
-6. Формальное моделирование систем защиты информации
+6. Разразботка формальных моделей при помощи уточнения
+
+   - книга Jean-Raymond Abrial "Modeling in Event-B: System and Software Engineering"
+
+7. Формальное моделирование систем защиты информации
 
    - [книга "Моделирование и верификация политик безопасности управления доступом в операционных системах"](https://www.ispras.ru/publications/2018/security_policy_modeling_and_verification/)
 
