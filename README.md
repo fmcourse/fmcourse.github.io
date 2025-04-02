@@ -59,7 +59,11 @@ Event-B в среде Rodin.
 
    - [Event-B Wiki](https://wiki.event-b.org/index.php/Main_Page)
 
-6. Разразботка формальных моделей при помощи уточнения
+6. Разработка формальных моделей при помощи уточнения
+
+   - слайды
+
+   - упражнения
 
    - книга Jean-Raymond Abrial "Modeling in Event-B: System and Software Engineering"
 
