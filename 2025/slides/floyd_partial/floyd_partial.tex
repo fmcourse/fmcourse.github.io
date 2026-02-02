@@ -1,0 +1,241 @@
+\documentclass[hyperref={unicode=true}]{beamer}
+\usepackage[utf8]{inputenx}
+\usepackage[russian]{babel}
+
+\usepackage{multicol}
+
+\usepackage[pgf]{dot2texi}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows}
+
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usepackage{comment}
+
+\title{Лекция 2. Метод индуктивных утверждений Флойда}
+\author{}
+\date{}
+
+\usetheme{Warsaw}
+
+\AtBeginSection[] {
+	\begin{frame}{Содержание}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+%\overfullrule=5pt
+
+\begin{document}
+	\begin{frame}{}
+		\titlepage
+	\end{frame}
+
+    \begin{frame}{Цель лекции}
+    Определить метод доказательства частичной корректности.
+
+    \textit{NB:} это не поиск <<ошибки>> в блок-схеме! То есть здесь мы не решаем <<задачу достижимости ошибочной конфигурации>>. Это задача доказательства отсутствия ошибки.
+    \end{frame}
+
+    \section{Доказательство на примере}
+
+	\begin{frame}[fragile]{Пример для доказательства}
+	\setlength{\columnsep}{4cm}
+
+	\begin{multicols}{2}
+
+	\huge
+	\begin{dot2tex}[options=-traw]
+	digraph G{
+		d2tgraphstyle="scale=0.4, transform shape";
+
+		/* nodes by levels */
+		node[shape=rectangle, height=1];
+		START[style=rounded, width=3, texlbl="$\begin{matrix}START:\\ y \leftarrow 0\end{matrix}$"];
+		JOIN;
+        COND[style=rounded, width=2, label="$y = x$"];
+		INCR[width=3.5, texlbl="$y \leftarrow y + 1$"];
+        HALT[style=rounded, width=3, texlbl="$\begin{matrix}HALT:\\  z \leftarrow y\end{matrix}$"];
+
+		/* edges */
+		node [shape=point, width=0, label=""];
+		START -> JOIN -> COND [weight=8];
+		{ rank=same; p1 -> JOIN; }
+		p1 -> p5 [weight=8, arrowhead=none];
+		{ rank=same; p3 -> COND [label="F", arrowhead=none]; COND -> p4 [label="T", arrowhead=none]; }
+		p3 -> INCR [weight=8];
+		p4 -> HALT [weight=8];
+		{ rank=same; INCR; HALT; }
+		INCR -> p6 [weight=8, arrowhead=none];
+		{ rank=same; p5 -> p6 [arrowhead=none]; }
+	}
+	\end{dot2tex}
+
+	\large
+
+    $\begin{matrix}
+    D_x = \mathbb{Z}\\
+    D_y = \mathbb{Z}\\
+    D_z = \mathbb{Z}\\
+    \varphi(x) \equiv T\\
+    \psi(x, z) \equiv 2 * z \geq x\\
+    \end{matrix}$\\
+
+    Доказать, что $\{\varphi\}~P~\{\psi\}$.
+	\end{multicols}
+
+	\end{frame}
+
+    \begin{frame}{Поиск доказательства}
+    Нельзя составить $M[P]$ в виде формулы, не прибегая к <<знанию принципа работы блок-схемы>> (иначе формулу для $M[P]$ можно было бы подставить в определение частичной корректности и свести задачу доказательства частичной корректности к задаче доказательства истинности формулы частичной корректности). Задача составления $M[P]$ алгоритмически неразрешима.
+    \end{frame}
+
+    \begin{frame}{Поиск доказательства}
+    Надо доказать, что во всех конфигурациях на псевдосвязке после HALT, достижимых из START, выполнено $2*y \geq x$. То есть, что то же выполнено на всех конфигурациях на связке между TEST и HALT, достижимых из START. Туда можно попасть только из связки между JOIN и TEST.
+
+    Если у нас было бы множество всех конфигураций для связки JOIN и TEST, достижимых из START (обозначим его $C$), то доказать частичную корректность значит доказать, что $\forall x \in D_x, y \in D_y \cdot (x,~y) \in C \land y = x \Rightarrow 2 * y \geq x$. Но множество $C$ не всегда можно выразить.
+
+    Но может получиться выразить надмножество множества $C$ (обозначим его $C'$), которого будет достаточно для доказательства частичной корректности: см. следующий слайд.
+    \end{frame}
+
+    \begin{frame}{Поиск доказательства}
+    Пусть $B$ --- множество конфигураций, гарантирующих выполнение постусловия (тех, у которых $2 * y \geq x$). Множество $C$ уже было введено на предыдущем слайде. Множество $T$ -- все конфигурации, при которых условие в операторе TEST истинно. Частичная корректность --- то же, что и $C~\cap~T~\subseteq~B$. Это можно доказать так:
+    \begin{enumerate}
+    \item предложить такое множество конфигураций $C'$, что $C~\subseteq~C'$ (1) и $C'~\cap~T~\subseteq~B$ (2);
+    \item доказать (1) и (2).
+    \end{enumerate}
+    Тогда из $C~\subseteq~C'$ будет следовать $C~\cap~T~\subseteq~C'~\cap~T$, добавляем $C'~\cap~T~\subseteq~B$ и получаем $C~\cap~T~\subseteq~B$, т.е. частичную корректность.
+
+    Вся хитрость в том, что $C$ может быть невыразимо в виде формул, а $C'$ можно выразить, причем еще и можно доказать (1) и (2).
+    \end{frame}
+
+    \begin{frame}{Поиск доказательства}
+    $C' = \{(x,~y)~|x \in D_x,~y \in D_y~\cdot~p(x,~y)\}$, где для предиката $p$ выполнены такие соотношения:
+
+    $\begin{cases}
+    \forall x \in D_x \cdot p(x,~0)\\
+    \forall x \in D_x,~y \in D_y \cdot p(x,~y) \land \neg (y = x) \Rightarrow p(x,~y + 1)\\
+    \end{cases}$
+
+    Тогда методом математической индукции можно доказать, что во всех конфигурациях на связке между JOIN и TEST выполнено $p(x,~y)$, то есть, что $C~\subseteq~C'$.
+
+    И не забываем, что должно быть выполнено $\forall x \in D_x,~y \in D_y \cdot p(x,~y) \land (y = x) \Rightarrow 2 * y \geq x$. Это докажет $C'~\cap~T~\subseteq~B$.
+    \end{frame}
+
+    \begin{frame}{Доказательство по индукции}
+    \emph{Лемма} Пусть $p:~D_x \times D_y \rightarrow \{T,~F\}$ таков, что выполнены (1) и (2). Тогда на всех конфигурациях на связке между JOIN и TEST, достижимых из START, выполнен предикат $p$.
+    $\begin{cases}
+    \forall x \in D_x \cdot p(x,~0) & (1)\\
+    \forall x \in D_x,~y \in D_y \cdot p(x,~y) \land \neg (y = x) \Rightarrow p(x,~y + 1) & (2)\\
+     \end{cases}$
+
+    \emph{Доказательство по индукции}. Рассмотрим произвольное вычисление. Отметим в нем подпоследов-ть связок между JOIN и TEST. Индукция будет вестись по этой подпослед-ти.
+
+    \emph{База индукции}. Самое первое вхождение такой связки возможно лишь единственным способом -- из оператора START. Из (1) следует утверждение.
+
+    \emph{Переход}. Предположим, что утверждение доказано для некоторого вхождения $A_n$ этой связки со значениями $(x,~y)$. Тогда на вхождении $A_{n+1}$ переменные будут равны $(x,~y+1)$ и из-за (2) утверждение верно на $A_{n+1}$.
+    \end{frame}
+
+    \begin{frame}{Доказательство частичной корректности}
+    Предположим, что существует такой предикат $p:~D_x \times D_y \rightarrow \{T,~F\}$, для которого выполнено:
+    $\begin{cases}
+    \forall x \in D_x \cdot p(x,~0) & (1)\\
+    \forall x \in D_x,~y \in D_y \cdot p(x,~y) \land \neg (y = x) \Rightarrow p(x,~y + 1) & (2)\\
+    \forall x \in D_x,~y \in D_y \cdot p(x,~y) \land (y = x) \Rightarrow 2 * y \geq x & (3) \\
+     \end{cases}$
+
+    Тогда по лемме этот предикат выполнен во всех конфигурациях на связке между JOIN и TEST, достижимых из START. Но тогда по (3) следует, что на всех конфигурациях между TEST и HALT, достижимых из START, выполнено постусловие, т.е. что блок-схема частично корректна относительно спецификации.
+
+    Такой предикат действительно существует: $p(x,~y)\equiv y \geq 0$.
+    \end{frame}
+
+    \section{Предварительные определения}
+
+    \begin{frame}{Пути в блок-схемах}
+    Дополним блок-схему <<псевдосвязками>>: перед оператором START и после каждого оператора HALT.
+
+    \bigskip
+
+    Путь в блок-схеме --- это последовательность связок или псевдосвязок, начинающаяся и заканчивающая на связке или псевдосвязке, являющаяся путем в графе блок-схемы. Обозначение: $e_1 -[n_1]-> e_2 -[n_2] -> ... -[n_k]-> e_{k+1}.$
+
+    \bigskip
+
+    Циклический путь --- это путь, в котором некоторая связка используется более 1 раза.
+    \end{frame}
+
+	\begin{frame}{Предварительные определения}
+	\begin{block}{}
+	$R_\alpha~:~D_{\bar{x}}~\times~D_{\bar{y}}~\rightarrow~\{T,~F\}$ -- предикат
+		пути $\alpha$ в блок-схеме (множество значений переменных в начале пути,
+		при которых вычисление <<пойдет>> по пути $\alpha$).
+	\end{block}
+	\begin{block}{}
+	$r_\alpha~:~D_{\bar{x}}~\times~D_{\bar{y}}~\rightarrow~D_{\bar{y}}$ -- функция
+		пути $\alpha$ в блок-схеме (значения промежуточных переменных в конце пути $\alpha$).
+	\end{block}
+	\end{frame}
+
+	\begin{frame}{Определение функций $R_\alpha$ и $r_\alpha$ (по индукции)}
+	% Обозначим путь $\alpha~\equiv~n_1 \rightarrow n_2 \rightarrow \ldots \rightarrow n_{k+1}$.
+	$R_\alpha (\bar{x},~\bar{y}) \equiv R_\alpha^1 (\bar{x},~\bar{y})$.
+	$r_\alpha (\bar{x},~\bar{y}) \equiv r_\alpha^1 (\bar{x},~\bar{y})$.
+
+	\begin{itemize}
+		\item $R_\alpha^{k+1} (\bar{x},~\bar{y}) \equiv T$, $r_\alpha^{k+1} (\bar{x},~\bar{y}) \equiv \bar{y}$
+        \item если $n_m$ -- START с функцией $f$, то $R_\alpha^m (\bar{x},~\bar{y}) \equiv R_\alpha^{m+1}(\bar{x},~\bar{y})$, $r_\alpha^m(\bar{x},~\bar{y}) \equiv r_\alpha^{m+1}(\bar{x},~f(\bar{x}))$
+		\item если $n_m$ -- ASSIGN с функцией $g$, то $R_\alpha^m (\bar{x},~\bar{y}) \equiv R_\alpha^{m+1} (\bar{x},~\bar{y})$, $r_\alpha^m (\bar{x},~\bar{y}) \equiv r_\alpha^{m+1} (\bar{x},~g(\bar{x},~\bar{y}))$
+		\item если $n_m$ -- TEST с функцией $t$ и связка $e_{m+1}$ помечена значением $b$, то $R_\alpha^m (\bar{x},~\bar{y}) \equiv t(\bar{x},~\bar{y}) = b~\land~R_\alpha^{m+1} (\bar{x},~\bar{y})$, $r_\alpha^m (\bar{x},~\bar{y}) \equiv r_\alpha^{m+1} (\bar{x},~\bar{y}) $
+		\item если $n_m$ -- JOIN, то $R_\alpha^m (\bar{x},~\bar{y}) \equiv R_\alpha^{m+1} (\bar{x},~\bar{y})$, $r_\alpha^m (\bar{x},~\bar{y}) \equiv r_\alpha^{m+1} (\bar{x},~\bar{y}) $
+	\end{itemize}
+	\end{frame}
+
+	\section{Метод индуктивных утверждений}
+
+    \begin{frame}{Определения} 
+	\emph{Множество точек сечения} --- это подмножество множества связок блок-схемы
+    такое, что каждый циклический путь блок-схемы содержит хотя бы одну связку
+    из этого множества.
+
+    \bigskip
+
+	\emph{Базовый путь} --- это путь без самопересечений, который начинается в
+    точке сечения или псевдосвязке и заканчивается в точке сечения или
+    псевдосвязке и внутри которого нет точек сечения.
+    \end{frame}
+
+	\begin{frame}{Метод индуктивных утверждений (1)}
+	\begin{block}{Шаг 1}
+	Выбрать множество точек сечения.
+	\end{block}
+	\begin{block}{Шаг 2}
+	Каждой точке сечения сопоставить \emph{индуктивное утверждение}, т.е. предикат $p : D_{\bar{x}} \times D_{\bar{y}} \rightarrow \{T,~F\}$. Псевдосвязке перед START сопоставить $p(x,~y)\equiv\varphi(x)$. Каждой псевдосвязке после HALT с функцией $h$ сопоставить $p(x,~y)\equiv\psi(x,h(x,y))$.
+	\end{block}
+    %\end{frame}
+    %\begin{frame}{Метод индуктивных утверждений (2)}
+	\begin{block}{Шаг 3}
+	Выписать \emph{условие верификации} для каждого \emph{базового пути} $\alpha$
+    (началу пути сопоставлено $p_1$, концу пути --- $p_2$):
+    
+    $\forall \bar{x} \in D_{\bar{x}},\bar{y} \in D_{\bar{y}}~\varphi(\bar{x})\land p_1(\bar{x},\bar{y})\land R_{\alpha}(\bar{x},\bar{y}) \Rightarrow p_2(\bar{x},r_{\alpha}(\bar{x},\bar{y}))$
+    \end{block}
+	\end{frame}
+
+	\begin{frame}{Корректность метода индуктивных утверждений}
+	\begin{block}{Теорема}
+		Дана произвольная блок-схема $P$ и спецификация для нее $(\varphi,~\psi)$. Пусть сделаны все шаги метода индуктивных утверждений. Тогда если все выписанные условия верификации истинны, то $\{\varphi\}~P~\{\psi\}$.
+	\end{block}
+
+	\emph{Замечание:} иногда индуктивные утверждения называют \emph{инвариантами циклов} (т.к. они должны быть выполнены всегда, когда вычисление программы находится в точке, куда они приписаны).
+	\end{frame}
+
+    \begin{frame}{Как искать инварианты циклов?}
+    Идеи к автоматическому поиску инвариантов циклов:
+    \begin{itemize}
+    \item конструирование инварианта при известной структуре цикла (\texttt{for(int i = 0; i < 1024; ++i) Body} $\Rightarrow 0 \leq i \leq 1024$)
+    \item итеративное уточнение инварианта (пытаемся угадать инвариант $\rightarrow$ проверяем инвариант $\rightarrow$ подстраиваем инвариант по полученному контрпримеру).
+    \end{itemize}
+
+    Очень много статей на эту тему.    
+    \end{frame}
+\end{document}
+
