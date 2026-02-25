@@ -1,12 +1,12 @@
 digraph G{
 /* nodes by levels */
 node[shape=rectangle];
-START[style=rounded, label=<START:<br/>(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (2<i>x</i>, 1)>];
+START[style=rounded, height=0.7, label=<START:<br/>(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (2<i>x</i>, 1)>];
 TEST1[style=rounded, label=<<i>y</i><sub>1</sub> &ne; 0>];
 TEST2[style=rounded, label=<<i>y</i><sub>1</sub> &le; 0>];
-ASSIGN1[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (-<i>y</i><sub>1</sub> - 1, <i>y</i><sub>1</sub> * <i>y</i><sub>2</sub>)>];
-ASSIGN2[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (-<i>y</i><sub>1</sub> + 1, - <i>y</i><sub>1</sub> * <i>y</i><sub>2</sub>)>];
-HALT[style=rounded, label=<HALT:<br/><i>z</i> &larr; <i>y</i><sub>2</sub>>];
+ASSIGN1[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (-<i>y</i><sub>1</sub> - 1, <i>y</i><sub>1</sub> &middot; <i>y</i><sub>2</sub>)>];
+ASSIGN2[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (-<i>y</i><sub>1</sub> + 1, - <i>y</i><sub>1</sub> &middot; <i>y</i><sub>2</sub>)>];
+HALT[style=rounded, height=0.7, label=<HALT:<br/><i>z</i> &larr; <i>y</i><sub>2</sub>>];
 
 /* edges */
 node [shape=point, width=0];

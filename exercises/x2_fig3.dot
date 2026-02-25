@@ -1,11 +1,10 @@
 	digraph G{
 		/* nodes by levels */
-		node[shape=rectangle];
+		node [shape=rectangle];
 		START[style=rounded, height=0.7, label=<START:<br/>(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>, <i>y</i><sub>3</sub>) &larr; (0, 0, 1)>];
 		ASSIGN1[label=<<i>y</i><sub>2</sub> &larr; <i>y</i><sub>2</sub> + <i>y</i><sub>3</sub>>];
         TEST[style=rounded, label=<<i>y</i><sub>2</sub> &gt; <i>x</i>>];
-		ASSIGN2[label=<<i>y</i><sub>1</sub> &larr; <i>y</i><sub>1</sub> + 1>];
-		ASSIGN3[label=<<i>y</i><sub>3</sub> &larr; <i>y</i><sub>3</sub> + 6 <i>y</i><sub>1</sub>>];
+		ASSIGN2[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>3</sub>) &larr; (<i>y</i><sub>1</sub> + 1, <i>y</i><sub>3</sub> + 2)>];
 		HALT[style=rounded, height=0.7, label=<HALT:<br/><i>z</i> &larr; <i>y</i><sub>1</sub>>];
 
         /* edges */
@@ -18,8 +17,7 @@
 		p3 -> ASSIGN2 [weight=8];
 		p4 -> HALT [weight=8];
 		{ rank=same; ASSIGN2; HALT; }
-        ASSIGN2 -> ASSIGN3 [weight=8];
-		ASSIGN3 -> p6 [weight=8, arrowhead=none];
+        ASSIGN2 -> p6 [weight=8, arrowhead=none];
 		{ rank=same; p5 -> p6 [arrowhead=none]; }
 	}
 

@@ -1,25 +1,53 @@
-digraph G{
+digraph G {
 
-/* nodes by levels */
-node[shape=rectangle];
-START[style=rounded, label=<START:<br/>(<i>y</i><sub>1</sub>,<i>y</i><sub>2</sub>,<i>y</i><sub>3</sub>) &larr; (<i>x</i><sub>1</sub> + <i>x</i><sub>2</sub> + 1, <i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>)>];
-ASSIGN1[label=<<i>y</i><sub>3</sub> &larr; <i>y</i><sub>3</sub> + 1>];
-TEST[style=rounded, width=2, label=<<i>y</i><sub>3</sub> = <i>x</i><sub>1</sub>>];
-ASSIGN2[label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (<i>y</i><sub>1</sub> + <i>y</i><sub>3</sub>, <i>y</i><sub>2</sub> + <i>y</i><sub>3</sub> + 1)>];
-ASSIGN3[label=<<i>y</i><sub>3</sub> &larr; <i>y</i><sub>3</sub> - 1>];
-HALT[style=rounded, label=<HALT:<br/>(<i>z</i><sub>1</sub>, <i>z</i><sub>2</sub>) &larr; (<i>y</i><sub>1</sub> - <i>y</i><sub>3</sub>, 2<i>y</i><sub>2</sub> - <i>y</i><sub>1</sub> + <i>x</i><sub>2</sub>)>];
+layout=neato;
+splines=false;
+node [shape=rectangle];
+edge [arrowhead=normal];
+
+START  [pos="0,5!",  style=rounded, height=0.7,
+label=<START:<br/>(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>, <i>y</i><sub>3</sub>) &larr; (<i>x</i><sub>1</sub> + <i>x</i><sub>2</sub> + 1, <i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>)>];
+
+ASSIGN1 [pos="0,4!",
+label=<<i>y</i><sub>3</sub> &larr; <i>y</i><sub>3</sub> + 1>];
+
+TEST [pos="0,3!", style=rounded, width=2,
+label=<<i>y</i><sub>3</sub> = <i>x</i><sub>1</sub>>];
+
+ASSIGN2 [pos="-2,2!",
+label=<(<i>y</i><sub>1</sub>, <i>y</i><sub>2</sub>) &larr; (<i>y</i><sub>1</sub> + <i>y</i><sub>3</sub>, <i>y</i><sub>2</sub> + <i>y</i><sub>3</sub> + 1)>];
+
+ASSIGN3 [pos="-2,1!",
+label=<<i>y</i><sub>3</sub> &larr; <i>y</i><sub>3</sub> - 1>];
+
+HALT [pos="0,0!", style=rounded, height=0.7,
+label=<HALT:<br/>(<i>z</i><sub>1</sub>, <i>z</i><sub>2</sub>) &larr; (<i>y</i><sub>1</sub> - <i>y</i><sub>3</sub>, 2<i>y</i><sub>2</sub> - <i>y</i><sub>1</sub> + <i>x</i><sub>2</sub>)>];
+
+node [shape=point, width=0];
+
+p2 [pos="0,3.5!"];
+p3 [pos="-2,3!"];
+p4 [pos="0,2.5!"];
+p5 [pos="-4,0.5!"];
+p6 [pos="-2,0.5!"];
+p1 [pos="-4,3.5!"];
 
 /* edges */
-node [shape=point, width=0, label=""];
-START -> ASSIGN1 [weight=8]; ASSIGN1 -> p2 [arrowhead=none];
-{ rank=same; p1 -> p2; }
-p1 -> p5 [weight=8, arrowhead=none];
-p2 -> TEST[weight=8];
-{ rank=same; p3 -> TEST [label="F", arrowhead=none]; TEST -> p4 [label="T", arrowhead=none]; }
-p3 -> ASSIGN2 [weight=8];
-p4 -> HALT [weight=8];
-{ rank=same; ASSIGN2; HALT; }
-ASSIGN2 -> ASSIGN3 [weight=8];
-ASSIGN3 -> p6 [weight=8, arrowhead=none];
-{ rank=same; p5 -> p6 [arrowhead=none]; }
+START -> ASSIGN1;
+ASSIGN1 -> p2 [arrowhead=none];
+p2 -> TEST;
+
+TEST -> p4 [label="T", arrowhead=none];
+TEST -> p3 [label="F", arrowhead=none];
+
+p4 -> HALT;
+
+p3 -> ASSIGN2;
+ASSIGN2 -> ASSIGN3;
+ASSIGN3 -> p6 [arrowhead=none];
+
+p1 -> p2;
+p1 -> p5 [arrowhead=none];
+p5 -> p6 [arrowhead=none];
+
 }
