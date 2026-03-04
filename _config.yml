@@ -10,3 +10,9 @@ header_pages:
   - anis.md
 
 description: ""
+
+exclude:
+  - slides/floyd_partial/.venv
+  - slides/floyd_term/.venv
+  - "**/.venv"
+  - "**/lib64"
