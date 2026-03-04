@@ -11,8 +11,8 @@ header_pages:
 
 description: ""
 
-exclude:
-  - slides/floyd_partial/.venv
-  - slides/floyd_term/.venv
-  - "**/.venv"
-  - "**/lib64"
+#exclude:
+#  - slides/floyd_partial/.venv
+#  - slides/floyd_term/.venv
+#  - "**/.venv"
+#  - "**/lib64"
