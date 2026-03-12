@@ -16,3 +16,5 @@ title: Rodin
    солверы. Для этого открыть Install, выбрать Rodin Plug-ins
    в Work with, поставить галочки напротив SMT CVC3, SMT CVC4,
    SMT veriT, SMT Z3 и нажать Next.
+
+[Шрифт для Rodin](BraveSansMono-Roman-0.12.ttf)
