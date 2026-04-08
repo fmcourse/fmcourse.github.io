@@ -40,9 +40,13 @@
 
    - книга Jean-Raymond Abrial "Modeling in Event-B: System and Software Engineering"
 
-5. Динамическая верификация на уровне исходного кода.
+5. Динамическая верификация.
 
    - слайды
+
+   - [Пример динамической верификации](rv/open_home.py)
+
+   - [Пример монитора ядра на eBPF](rv/bpf.tgz)
 
    - [Runtime Verification in Inria](https://inria.hal.science/hal-01762298/file/rv-book-editor-version.pdf)
 
