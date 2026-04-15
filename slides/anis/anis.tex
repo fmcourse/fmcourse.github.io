@@ -1,0 +1,192 @@
+\documentclass[hyperref={unicode=true}]{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenx}
+\usepackage[russian]{babel}
+
+\usepackage{multicol}
+
+\usepackage[pgf]{dot2texi}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows}
+
+\usepackage{listings}
+\usepackage{graphicx}
+
+\usepackage{comment}
+
+\title{Лекция 6. Среда Anis для динамической верификации на соответствие формальной модели Event-B}
+\author{}
+\date{}
+
+\usetheme{Warsaw}
+
+\AtBeginSection[] {
+	\begin{frame}{Содержание}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+%\overfullrule=5pt
+
+\begin{document}
+	\begin{frame}{}
+		\titlepage
+	\end{frame}
+
+    \begin{frame}{Цель лекции}
+    Познакомиться с тем, как можно проводить динамическую верификацию
+    ядра Linux на соответствие формальной модели и какую поддержку
+    для этого оказывает среда Anis.
+    \end{frame}
+
+    \section{Введение}
+
+	\begin{frame}{Для чего нужен Anis}
+    \begin{itemize}
+    \item Позволяет задействовать формальную модель
+            Event-B как оракул для динамической верификации
+            на соответствие этой модели.
+    \item Возможно и иное использование оракула.
+    \item На данный момент динамическая верификация выполняется
+            на сценариях, описываемых тестами.
+    \item В планах применить этот оракул для реального
+            мониторинга ядра.
+	\end{itemize}
+    \end{frame}
+
+    \begin{frame}{Основной компонент Anis}
+    \begin{itemize}
+    \item это транслятор Event-B в Python
+    \item Позволяет задействовать формальную модель
+            как оракул в тестах на Python
+    \item pytest -- инфраструктура тестирования на Python.
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Как запустить Anis}
+    \begin{itemize}
+    \item Это расширение для \texttt{VSCode}
+    \item Дополняет \texttt{VSCode} инструментами для
+        разработки моделей Event-B и их использования
+    \end{itemize}
+    \end{frame}
+
+    \section{Тестирование при помощи pytest}
+
+    \begin{frame}{Определение теста в pytest}
+    \begin{itemize}
+    \item Тест --- это функция или метод класса с пустым конструктором
+    \item Тест пройден, если функция завершается нормально
+    \item Тест провален, если функция выбрасывает исключение \texttt{AssertionError}
+    \item Тест ошибочен, если функция выбрасывает другое исключение
+    \item Поэтому проверки в тесте ожидаются при помощи оператора \texttt{assert}
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Упражнение}
+    В модуле \texttt{int2text.py} написана ошибочная реализация функции,
+    которая разбивает число от 0 до 999 на сумму чисел (возвращается как кортеж).
+    Если прочитать числа в этом кортеже последовательно, должно получиться
+    исходное число.
+
+    Напишите тесты для этой функции и найдите все ошибки в ее реализации.
+    \end{frame}
+
+    \begin{frame}{Что еще есть в pytest}
+    \begin{itemize}
+    \item параметризованные тесты (помечены декоратором pytest.mark.parametrize)
+    \item фиксчи, в том числе session-scoped
+    \item фиксчи с финализацией при помощи yield
+    \item параметризованные фиксчи
+    \item плагины с предопределенными фиксчами
+    \item \texttt{conftest.py} для фиксч, видимых для всех тестов
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{VSCode}
+    \begin{itemize}
+    \item \texttt{VSCode} --- расширяемая IDE (частично open-source)
+    \item Расширения для Python
+    \item Команды
+    \item Настраивание расширений и среды (в том числе, на уровне User и Workspace)
+    \item Multi-root workspace
+    \item Запуск и отладка, их конфигурирование
+    \item Task'и
+    \item Активация расширений
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Тестирование в VSCode}
+    \begin{itemize}
+    \item Необходима виртуальная среда python
+    \item Вкладка Testing: дерево тестов, запуск тестов и отладка
+    \item Тестирование со сбором покрытия по коду
+    \item Расширение Coverage Gutters: показ покрытия в редакторе
+    \item Генерация HTML отчета о покрытии кода (\texttt{--cov-report html})
+    \end{itemize}
+    \end{frame}
+
+    \section{Тестирование ядра Linux}
+
+    \begin{frame}{Объект тестирования}
+    \begin{itemize}
+    \item Цель --- тщательно протестировать модуль безопасности
+    \item Тестирование модульное? системное? системное нацеленное!
+    \item Доступ до модуля безопасности осуществляется в
+            системных вызовах (проверка возможности предоставить доступ)
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Методика тестирования}
+    \begin{itemize}
+    \item Документ, где требования к модулю безопасности изложены
+        в виде тестовых ситуаций
+    \item Содержит предположения и ограничения, в которых проводится
+        тестирование
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Структура теста}
+    \begin{itemize}
+    \item setup --- подготовка системы (файлы, пользователи, конфигурация ядра)
+    \item run --- осуществление целевого системного вызова (или последовательности
+                    системных вызовов) некоторым исполнимым модулем
+    \item teardown --- восстановление системы (необязательно, если тест выполняется
+            в контейнере и не задействует конфигурацию ядра хоста)
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{LinuxSpec}
+    \begin{itemize}
+    \item Такая структура требует разных инструментов: скрипт для записи setup,
+            Си для записи программы с целевыми системными вызовами, Python
+            для запуска тестов
+    \item Разным тестам может потребоваться разные способы их выполнения
+    \item Поэтому удобно найти способ записи, который бы скрыл эти подробности
+    \item \texttt{LinuxSpec} --- интерфейс компонента, который выполняет шаги
+        на этапе setup, превращает описание цепочки системных вызовов в Си
+        программу и ее компилирует, может по-разному выполнять тест
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Как выглядит LinuxSpec}
+    \begin{itemize}
+    \item конкретные действия зависят от методики тестирования. Например (\texttt{t: LinuxSpec}):
+    \item \texttt{t.make\_file(path, owner, group, mode)} --- создать файл
+    \item \texttt{with t.make\_prog() as child: child.open(path, flags)}
+        --- превратить описание цепочки системных вызовов (описывается
+                как последовательность методов объекта \texttt{child})
+            в исполнимый модуль
+    \item \texttt{t.run(prog, user, group, umask)} --- запустить программу
+        под мониторингом и собрать трассу для перепроверки
+    \item Надо описывать LinuxSpec вручную для каждого проекта 
+    \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Упражнение}
+    Ознакомьтесь с примером проекта по тестированию ядра
+    согласно методике тестирования. Найдите отсутствующий тест,
+    требуемый по методике, и реализуйте его.
+    \end{frame}
+
+\end{document}
+
