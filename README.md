@@ -57,6 +57,8 @@
 
    - [Пример для тестирования на pytest](test/int2text.py)
 
+   - [Пример тестов для ядра Linux](test/linux.tgz)
+
    - [книга "Моделирование и верификация политик безопасности управления доступом в операционных системах"](https://www.ispras.ru/publications/2018/security_policy_modeling_and_verification/)
 
 7. Язык формальной спецификации Си-программ ACSL и
