@@ -18,3 +18,4 @@ htmlcov/
 *-fig*.dot
 .venv
 _site
+__pycache__
