@@ -59,6 +59,8 @@
 
    - [Пример тестов для ядра Linux](test/linux.tgz)
 
+   - [Пример проекта Анис](https://nextcloud.ispras.ru/index.php/s/NrYp9S7XdP352aw)
+
    - [книга "Моделирование и верификация политик безопасности управления доступом в операционных системах"](https://www.ispras.ru/publications/2018/security_policy_modeling_and_verification/)
 
 7. Язык формальной спецификации Си-программ ACSL и

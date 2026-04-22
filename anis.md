@@ -17,4 +17,6 @@ Anis --- это инструмент, помогающий в динамичес
 языка Python (pytest в качестве инфраструктуры
 тестирования) и его расширения для VSCode.
 
-[Страница для скачивания расширения и документации](https://gitlab.ispras.ru/anis/eventb-vscode-extension/-/releases) расположена на сервере gitlab.ispras.ru.
+Файлы для скачивания:
+
+- [`vsix`-файл расширения Анис](https://nextcloud.ispras.ru/index.php/s/zYtNsaLSGo7xB56)
