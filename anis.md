@@ -21,7 +21,7 @@ Anis --- это инструмент, помогающий в динамичес
 
 #### Версия 0.4.0-beta.2
 
-- extension: <https://nextcloud.ispras.ru/index.php/s/WaBC9eBmCn3Nbds>
+- extension: <https://nextcloud.ispras.ru/index.php/s/5oFNKxKP8HXkqqZ>
 
 - workspace: <https://nextcloud.ispras.ru/index.php/s/4sW9pdgBQqAgwdy>
 
