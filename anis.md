@@ -19,6 +19,22 @@ Anis --- это инструмент, помогающий в динамичес
 
 <br/>
 
+#### Версия 0.4.0-beta.3
+
+- extension: <https://nextcloud.ispras.ru/index.php/s/y32qgEQbawnt5mJ>
+
+- workspace: <https://nextcloud.ispras.ru/index.php/s/c7f52qSEiBQLso7>
+
+Основные изменения:
+
+- extension: добавлена фильтрация по уровням модели при построении покрытия
+
+- workspace: исправлена ошибка в мониторе (в трассу писались все атрибуты
+        элемента трассы даже для неуспешного системного вызова, в итоге
+        они транслировались как обычные атрибуты, а не как отсутствующие)
+
+<br/>
+
 #### Версия 0.4.0-beta.2
 
 - extension: <https://nextcloud.ispras.ru/index.php/s/5oFNKxKP8HXkqqZ>
