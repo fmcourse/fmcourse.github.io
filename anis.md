@@ -19,6 +19,24 @@ Anis --- это инструмент, помогающий в динамичес
 
 <br/>
 
+#### Версия 0.4.0-beta.4
+
+- extension: <https://nextcloud.ispras.ru/index.php/s/NbzWYFmNCCHXZ2Y>
+
+- workspace: <https://nextcloud.ispras.ru/index.php/s/wttGopSeYkCzikY>
+
+Основные изменения:
+
+- В `Event` добавлены поля со значениями охранных условий
+  (для упрощения отладки)
+
+- Исправлен баг при покрытии модели по строкам 
+
+- workspace: добавлено пропущенное ранее охранное
+  условие в событии `openat_create` в машине `DAC_EXT`
+
+<br/>
+
 #### Версия 0.4.0-beta.3
 
 - extension: <https://nextcloud.ispras.ru/index.php/s/y32qgEQbawnt5mJ>
